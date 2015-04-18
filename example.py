@@ -7,6 +7,12 @@ import easyapi
 
 class Example(easyapi.Definition):
 
+    def __init__(self, something, config="config.json", database="database.sqlite"):
+        """ init help text """
+        print something
+        print config
+        print database
+
     @easyapi.command
     def test_command(self, positional, optional="default"):
         return "test_command: %s %s" % (positional, optional)

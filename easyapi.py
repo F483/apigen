@@ -42,6 +42,7 @@ def _get_rpc_commands(instance):
     is_rpc = lambda i: 'rpc_command' in dir(i[1]) and i[1].rpc_command
     return dict(filter(is_rpc, inspect.getmembers(instance)))
 
+
 def _get_cli_commands(definition):
     is_cli = lambda i: 'cli_command' in dir(i[1]) and i[1].rpc_command
     return dict(filter(is_cli, inspect.getmembers(definition)))
@@ -50,10 +51,9 @@ def _get_cli_commands(definition):
 def _add_argument(parser, name, has_default, default):
     if has_default:
         parser.add_argument("--%s" % name, default=default, 
-                            help="optional (default=%s)" % default)
+                            help="optional default=%s" % default)
     else:
         parser.add_argument(name, help="required")
-
 
 
 def _add_arguments(parser, command):
@@ -75,8 +75,19 @@ def _add_arguments(parser, command):
 
 def _get_arguments(definition):
     parser = argparse.ArgumentParser()
-    # TODO add app args
-    subparsers = parser.add_subparsers(title='Commands', dest='command')
+
+    # add programm args
+    members = dict(inspect.getmembers(definition))
+    constructor = members["__init__"]
+    if type(constructor) == type(members["jsonrpc_service"]):
+        parser = argparse.ArgumentParser(description=constructor.__doc__)
+        _add_arguments(parser, constructor)
+    else:
+        description = "%s Command-line interface" % definition.__name__
+        parser = argparse.ArgumentParser(description=description)
+
+    # add command args
+    subparsers = parser.add_subparsers(title='commands', dest='command')
     commands = _get_cli_commands(definition)
     for name, command in commands.items():
         command_parser = subparsers.add_parser(name, help=command.__doc__)
@@ -87,7 +98,7 @@ def _get_arguments(definition):
 def run(definition):
     args = _get_arguments(definition)
     command_names = _get_cli_commands(definition).keys()
-    instance = definition() # TODO use app args
+    instance = definition() # TODO use programm args
     kwargs = vars(args)
     command = getattr(instance, kwargs.pop("command"))
     print command(**kwargs)
