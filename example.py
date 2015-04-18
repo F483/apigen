@@ -16,4 +16,5 @@ class Example(easyapi.Definition):
         """Test the command line interface"""
         return "test_cli"
 
+
 easyapi.run(Example)
