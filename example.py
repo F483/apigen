@@ -7,11 +7,13 @@ import easyapi
 
 class Example(easyapi.Definition):
 
-    @easyapi.method
-    def test_method(self, positional, optional="default"):
-        return "test_method: %s %s" % (positional, optional)
+    @easyapi.command
+    def test_command(self, positional, optional="default"):
+        return "test_command: %s %s" % (positional, optional)
 
+    @easyapi.command
+    def test_cli(self):
+        """Test the command line interface"""
+        return "test_cli"
 
-example = Example()
-example.start_jsonrpc_server()
-
+easyapi.run(Example)
