@@ -4,7 +4,7 @@
 
 
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -23,7 +23,8 @@ setup(
     author='Fabian Barkhau',
     author_email='fabian.barkhau@gmail.com',
     license='MIT',
-    #packages=['easyapi'],
+    packages=find_packages(),
+    download_url = "https://github.com/F483/easyapi/archive/master.zip",
     #test_suite="tests",
     install_requires=[
         'python-jsonrpc == 0.7.3'
