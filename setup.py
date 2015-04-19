@@ -18,12 +18,12 @@ setup(
     description=('Easily create a CLI and JSON-RPC interface '
                  'from a common API definition.'),
     long_description=README,
-    keywords="cli json rpc api argparse"
+    keywords="cli json rpc api argparse",
     url='https://github.com/F483/easyapi/',
     author='Fabian Barkhau',
     author_email='fabian.barkhau@gmail.com',
     license='MIT',
-    packages=['easyapi'],
+    #packages=['easyapi'],
     #test_suite="tests",
     install_requires=[
         'python-jsonrpc == 0.7.3'
