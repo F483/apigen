@@ -38,7 +38,7 @@ class Definition(object):
 
     @command(rpc=False)
     def jsonrpc(self, hostname="localhost", port=8080):
-        """start json-rpc service"""
+        """Start json-rpc service."""
         print "Starting %s json-rpc service at http://%s:%s" % (
             self.__class__.__name__, hostname, port
         )
@@ -121,7 +121,7 @@ def _pop_init_args(definition, kwargs):
     init_args = {}
     init = _get_init(definition)
     if not init:
-      return init_args
+        return init_args
     argnames = inspect.getargspec(init).args[1:] # exclude self
     for argname in argnames:
         init_args[argname] = kwargs.pop(argname)

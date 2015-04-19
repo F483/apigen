@@ -9,21 +9,29 @@ import easyapi
 
 class ExampleProgramm(easyapi.Definition):
 
-    def __init__(self, config="example.json"):
-        """Example programm help text."""
-        # do something usefull with the programm arguments
+    def __init__(self, config="example.json", quiet=False):
+        """Example programm help text from init doc string."""
+        # programm positional and optional arguments taken from __init__ method
+        # default argument of value False will be a flag in the cli
 
     @easyapi.command()
-    def showargs(self, positional_arg, optional_arg="example"):
-        """returns the arguments passed"""
-        return "showargs: %s %s" % (positional_arg, optional_arg)
+    def example(self, positional_arg, optional_arg="example"):
+        """Example command help text from method doc string."""
+        # arguments without defaults are required positional arguments in th cli
+        # arguments with default values will be optional in the cli
+        return "positional_arg = %s, optional_arg = %s" % (
+            positional_arg, optional_arg
+        )
 
-    @easyapi.command()
-    def testflag(self, quiet=False): # will add arg as flag if default is False
-        """return text if quiet flag is not set"""
-        if not quiet:
-            return "something"
-        return ""
+    @easyapi.command(rpc=False) # don't show in rpc interface
+    def clionly(self):
+        """Command only visible in cli interface."""
+        return "clionly"
+
+    @easyapi.command(cli=False) # don't show in cli interface
+    def rpconly(self):
+        """Command only visible in rpc interface."""
+        return "rpconly"
 
 
 if __name__ == "__main__":
