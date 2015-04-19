@@ -4,10 +4,10 @@
 # License: MIT (see LICENSE file)
 
 
-import easyapi
+import apigen
 
 
-class ExampleProgramm(easyapi.Definition):
+class ExampleProgramm(apigen.Definition):
     """Example programm help text from class doc string."""
 
     def __init__(self, config="example.json", quiet=False):
@@ -15,7 +15,7 @@ class ExampleProgramm(easyapi.Definition):
         # default argument of value False will be a flag in the cli
         pass
 
-    @easyapi.command()
+    @apigen.command()
     def example(self, positional_arg, optional_arg="example"):
         """Example command help text from method doc string."""
         # arguments without defaults are required positional arguments in th cli
@@ -24,17 +24,17 @@ class ExampleProgramm(easyapi.Definition):
             positional_arg, optional_arg
         )
 
-    @easyapi.command(rpc=False) # don't show in rpc interface
+    @apigen.command(rpc=False) # don't show in rpc interface
     def clionly(self):
         """Command only visible in cli interface."""
         return "clionly"
 
-    @easyapi.command(cli=False) # don't show in cli interface
+    @apigen.command(cli=False) # don't show in cli interface
     def rpconly(self):
         """Command only visible in rpc interface."""
         return "rpconly"
 
 
 if __name__ == "__main__":
-    easyapi.run(ExampleProgramm) # run cli interface
+    apigen.run(ExampleProgramm) # run cli interface
 

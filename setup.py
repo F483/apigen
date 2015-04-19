@@ -13,18 +13,18 @@ with open(os.path.join(PROJECT_DIR, 'README.md')) as f:
 
 
 setup(
-    name='easyapi',
+    name='apigen',
     version='0.1.0',
     description=('Easily create a CLI and JSON-RPC interface '
                  'from a common API definition.'),
     long_description=README,
     keywords="cli json rpc api argparse",
-    url='https://github.com/F483/easyapi/',
+    url='https://github.com/F483/apigen/',
     author='Fabian Barkhau',
     author_email='fabian.barkhau@gmail.com',
     license='MIT',
     packages=find_packages(),
-    download_url = "https://github.com/F483/easyapi/archive/master.zip",
+    download_url = "https://github.com/F483/apigen/archive/master.zip",
     #test_suite="tests",
     install_requires=[
         'python-jsonrpc == 0.7.3'

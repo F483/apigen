@@ -1,4 +1,4 @@
 env/*
-easyapi.egg-info/*
+apigen.egg-info/*
 build/*
 dist/*
