@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# coding: utf-8
 # Copyright (c) 2015 Fabian Barkhau <fabian.barkhau@gmail.com>
 # License: MIT (see LICENSE file)
 
@@ -8,11 +8,12 @@ import easyapi
 
 
 class ExampleProgramm(easyapi.Definition):
+    """Example programm help text from class doc string."""
 
     def __init__(self, config="example.json", quiet=False):
-        """Example programm help text from init doc string."""
         # programm positional and optional arguments taken from __init__ method
         # default argument of value False will be a flag in the cli
+        pass
 
     @easyapi.command()
     def example(self, positional_arg, optional_arg="example"):

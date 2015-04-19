@@ -2,21 +2,22 @@
 
 Easily create a CLI and JSON-RPC interface from a common API definition.
 
-## Installation
+### Installation
 
     pip install easyapi
 
-## Example API definition
+### Example API definition
 
     import easyapi
 
 
     class ExampleProgramm(easyapi.Definition):
+        """Example programm help text from class doc string."""
 
         def __init__(self, config="example.json", quiet=False):
-            """Example programm help text from init doc string."""
             # programm positional and optional arguments taken from __init__ method
             # default argument of value False will be a flag in the cli
+            pass
 
         @easyapi.command()
         def example(self, positional_arg, optional_arg="example"):
@@ -41,14 +42,14 @@ Easily create a CLI and JSON-RPC interface from a common API definition.
     if __name__ == "__main__":
         easyapi.run(ExampleProgramm) # run cli interface
 
-## Generated cli interface (uses argparse)
+### Generated cli interface (uses argparse)
 
 Programm interface and help text.
 
     $ python example.py -h
     usage: example.py [-h] [--config CONFIG] [--quiet] <command> ...
 
-    Example programm help text from init doc string.
+    Example programm help text from class doc string.
 
     optional arguments:
       -h, --help       show this help message and exit
@@ -71,18 +72,18 @@ Command interface and help text (jsonrpc command added by default).
       --hostname HOSTNAME  optional default=localhost
       --port PORT          optional default=8080
 
-## Generated json-rpc interface (uses python-jsonrpc)
+### Generated json-rpc interface (uses python-jsonrpc)
 
 Starting the jsonrpc service from the command line.
 
     $ python example.py jsonrpc
     Starting ExampleProgramm json-rpc service at http://localhost:8080
 
-Client site jsonrpc usage.
+Client site jsonrpc usage with python-jsonrpc.
 
     > import pyjsonrpc
-    > http_client = pyjsonrpc.HttpClient(url = "http://localhost:8080")
-    > print http_client.rpconly()
+    > rpc = pyjsonrpc.HttpClient(url = "http://localhost:8080")
+    > print rpc.rpconly()
     rpconly
 
 Starting the jsonrpc service from within python.
@@ -92,7 +93,7 @@ Starting the jsonrpc service from within python.
     > api.jsonrpc()
     Starting ExampleProgramm json-rpc service at http://localhost:8080
 
-Getting a HttpRequestHandler for further use.
+Getting a pyjsonrpc.HttpRequestHandler for further use.
 
     > import example
     > api = example.ExampleProgramm()

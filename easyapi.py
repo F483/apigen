@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 # Copyright (c) 2015 Fabian Barkhau <fabian.barkhau@gmail.com>
 # License: MIT (see LICENSE file)
 
@@ -33,7 +33,7 @@ class Definition(object):
 
     def get_http_request_handler(self):
         class RequestHandler(pyjsonrpc.HttpRequestHandler):
-            commands = _get_rpc_commands(self)
+            methods = _get_rpc_commands(self)
         return RequestHandler
 
     @command(rpc=False)
@@ -97,14 +97,17 @@ def _get_init(definition):
 
 def _get_arguments(definition):
 
+    # create parser
+    if definition.__doc__:
+        description = definition.__doc__
+    else:
+        description = "%s Command-line interface" % definition.__name__
+    parser = argparse.ArgumentParser(description=description)
+
     # add programm args
     init = _get_init(definition)
     if init:
-        parser = argparse.ArgumentParser(description=init.__doc__)
         _add_arguments(parser, init)
-    else:
-        description = "%s Command-line interface" % definition.__name__
-        parser = argparse.ArgumentParser(description=description)
 
     # add command args
     subparsers = parser.add_subparsers(
