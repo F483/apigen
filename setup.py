@@ -8,13 +8,13 @@ from setuptools import setup, find_packages
 
 
 PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(PROJECT_DIR, 'README.md')) as f:
+with open(os.path.join(PROJECT_DIR, 'README.rst')) as f:
     README = f.read()
 
 
 setup(
     name='apigen',
-    version='0.1.0',
+    version='0.1.1',
     description=('Easily create a CLI and JSON-RPC interface '
                  'from a common API definition.'),
     long_description=README,
@@ -24,7 +24,7 @@ setup(
     author_email='fabian.barkhau@gmail.com',
     license='MIT',
     packages=find_packages(),
-    download_url = "https://github.com/F483/apigen/archive/master.zip",
+    download_url = "https://pypi.python.org/packages/source/a/apigen/apigen-0.1.1.tar.gz",
     #test_suite="tests",
     install_requires=[
         'python-jsonrpc == 0.7.3'
