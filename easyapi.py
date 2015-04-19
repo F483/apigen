@@ -5,27 +5,38 @@
 
 import argparse
 import inspect
-import json
 import pyjsonrpc
 from BaseHTTPServer import HTTPServer
 
 
-def command(func): # TODO add arguments for cli and rpc
-    if True or cli: # flag as cli command
-        func.cli_command = True
-    if True or rpc: # flag as rpc command
-        func.rpc_command = True
-    return func
+class VarargsFound(Exception):
+    def __init__(self, command):
+        msg = "command '%s' cannot use varargs" % command.__name__
+        super(VarargsFound, self).__init__(msg)
+
+
+class KeywordsFound(Exception):
+    def __init__(self, command):
+        msg = "command '%s' cannot use keywords" % command.__name__
+        super(KeywordsFound, self).__init__(msg)
+
+
+def command(cli=True, rpc=True):
+    def decorator(func):
+        func.cli_command = cli # set cli flag
+        func.rpc_command = rpc # set rpc flag
+        return func
+    return decorator
 
 
 class Definition(object):
 
-    def get_rpc_request_handler(self):
+    def get_http_request_handler(self):
         class RequestHandler(pyjsonrpc.HttpRequestHandler):
             commands = _get_rpc_commands(self)
         return RequestHandler
 
-    @command#(rpc=False)
+    @command(rpc=False)
     def jsonrpc(self, hostname="localhost", port=8080):
         """start json-rpc service"""
         print "Starting %s json-rpc service at http://%s:%s" % (
@@ -33,7 +44,7 @@ class Definition(object):
         )
         http_server = HTTPServer(
             server_address=(hostname, port),
-            RequestHandlerClass=self.get_rpc_request_handler()
+            RequestHandlerClass=self.get_http_request_handler()
         )
         http_server.serve_forever()
 
@@ -44,7 +55,7 @@ def _get_rpc_commands(instance):
 
 
 def _get_cli_commands(definition):
-    is_cli = lambda i: 'cli_command' in dir(i[1]) and i[1].rpc_command
+    is_cli = lambda i: 'cli_command' in dir(i[1]) and i[1].cli_command
     return dict(filter(is_cli, inspect.getmembers(definition)))
 
 
@@ -63,10 +74,9 @@ def _add_argument(parser, name, has_default, default):
 def _add_arguments(parser, command):
     argspec = inspect.getargspec(command)
     if argspec.varargs: # no *args
-        raise Exception("varargs not supported: %s" % command.__name__)
+        raise VarargsFound(command)
     if argspec.keywords: # no **kwargs
-        raise Exception("keywords not supported: %s" % command.__name__)
-    # TODO limit default types
+        raise KeywordsFound(command)
     args = argspec.args[1:] # exclude self
     defaults = argspec.defaults if argspec.defaults else []
     positional_count = len(args) - len(defaults)
