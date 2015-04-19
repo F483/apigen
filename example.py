@@ -5,22 +5,23 @@
 
 import easyapi
 
-class Example(easyapi.Definition):
+class ExampleProgramm(easyapi.Definition):
 
-    def __init__(self, something, config="config.json", database="database.sqlite"):
-        """ init help text """
-        print something
-        print config
-        print database
+    def __init__(self, config="example.json"):
+        """Example programm help text."""
+        # do something usefull with the programm arguments
 
     @easyapi.command
-    def test_command(self, positional, optional="default"):
-        return "test_command: %s %s" % (positional, optional)
+    def showargs(self, positional_arg, optional_arg="example"):
+        """returns the arguments passed"""
+        return "showargs: %s %s" % (positional_arg, optional_arg)
 
     @easyapi.command
-    def test_cli(self):
-        """Test the command line interface"""
-        return "test_cli"
+    def testflag(self, quiet=False): # will add arg as flag if default is False
+        """return text if quiet flag is not set"""
+        if not quiet:
+            return "something"
+        return ""
 
+easyapi.run(ExampleProgramm) # run cli interface
 
-easyapi.run(Example)
