@@ -1,7 +1,8 @@
 # coding: utf-8
 # Copyright (c) 2015 Fabian Barkhau <fabian.barkhau@gmail.com>
 # License: MIT (see LICENSE file)
-
+from __future__ import print_function
+from __future__ import unicode_literals
 
 import argparse
 import inspect
@@ -39,9 +40,9 @@ class Definition(object):
     @command(rpc=False)
     def jsonrpc(self, hostname="localhost", port=8080):
         """Start json-rpc service."""
-        print "Starting %s json-rpc service at http://%s:%s" % (
+        print("Starting %s json-rpc service at http://%s:%s" % (
             self.__class__.__name__, hostname, port
-        )
+        ))
         http_server = HTTPServer(
             server_address=(hostname, port),
             RequestHandlerClass=self.get_http_request_handler()
@@ -136,6 +137,6 @@ def run(definition):
     command_names = _get_cli_commands(definition).keys()
     instance = definition(**_pop_init_args(definition, kwargs))
     command = getattr(instance, kwargs.pop("command"))
-    print command(**kwargs)
+    print(command(**kwargs))
 
 
