@@ -7,28 +7,35 @@ import os
 from setuptools import setup, find_packages
 
 
-PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(PROJECT_DIR, 'README.rst')) as f:
-    README = f.read()
+THISDIR = os.path.dirname(os.path.abspath(__file__))
+os.chdir(THISDIR)
+
+
+VERSION = open("version.txt").readline().strip()
+DOWNLOAD_BASEURL = "https://pypi.python.org/packages/source/a/apigen/"
+DOWNLOAD_URL = DOWNLOAD_BASEURL + "apigen-%s.tar.gz" % VERSION
 
 
 setup(
     name='apigen',
-    version='0.1.1',
+    version=VERSION,
     description=('Easily create a CLI and JSON-RPC interface '
                  'from a common API definition.'),
-    long_description=README,
-    keywords="cli json rpc api argparse",
+    long_description=open("README.rst").read(),
+    keywords=("CLI, JSON, RPC, JSON-RPC, API, argparse, Remote Procedure Call, "
+              "JavaScript Object Notation, Data Interchange"),
     url='https://github.com/F483/apigen/',
     author='Fabian Barkhau',
     author_email='fabian.barkhau@gmail.com',
     license='MIT',
     packages=find_packages(),
-    download_url = "https://pypi.python.org/packages/source/a/apigen/apigen-0.1.1.tar.gz",
+    download_url = DOWNLOAD_URL,
     #test_suite="tests",
     install_requires=[
-        'python-jsonrpc == 0.7.3'
+        'python-jsonrpc == 0.7.3',
+        'argparse == 1.2.1'
     ],
+    # TODO dev lib dependencies
     zip_safe=False
 )
 

@@ -18,81 +18,75 @@ Example API definition
 
 .. code:: python
 
-    #!/usr/bin/env python
-    # coding: utf-8
-    # Copyright (c) 2015 Fabian Barkhau <fabian.barkhau@gmail.com>
-    # License: MIT (see LICENSE file)
-
-
     import apigen
+    from decimal import Decimal
 
 
-    class ExampleProgramm(apigen.Definition):
-        """Example programm help text from class doc string."""
-
-        def __init__(self, config="example.json", quiet=False):
-            # programm positional and optional arguments taken from __init__ method
-            # default argument of value False will be a flag in the cli
-            pass
+    class Calculator(apigen.Definition): # programm name taken from class name
+        """example programm""" # programm help text taken from class doc string.
 
         @apigen.command()
-        def example(self, positional_arg, optional_arg="example"):
-            """Example command help text from method doc string."""
-            # arguments without defaults are required positional arguments in th cli
-            # arguments with default values will be optional in the cli
-            return "positional_arg = %s, optional_arg = %s" % (
-                positional_arg, optional_arg
-            )
-
-        @apigen.command(rpc=False) # don't show in rpc interface
-        def clionly(self):
-            """Command only visible in cli interface."""
-            return "clionly"
-
-        @apigen.command(cli=False) # don't show in cli interface
-        def rpconly(self):
-            """Command only visible in rpc interface."""
-            return "rpconly"
+        def add(self, a, b): # command name and args taken from method definition
+            """adds two numbers""" # help text taken from method doc string
+            result = Decimal(a) + Decimal(b)
+            print result # cli interface uses stdout and errout
+            return result # rpc interface uses value returned by method
 
 
     if __name__ == "__main__":
-        apigen.run(ExampleProgramm) # run cli interface
+        apigen.run(Calculator) # run cli interface
+
 
 =======================================
 Generated cli interface (uses argparse)
 =======================================
 
-Programm interface and help text.
+Program, command and arguments order.
 
 ::
 
-    $ python example.py -h
-    usage: example.py [-h] [--config CONFIG] [--quiet] <command> ...
+    program [program arguments] <command> [command arguments] 
 
-    Example programm help text from class doc string.
+
+Argument format.
+
+::
+
+    program positionalargvalue --optionalarg=value --flag
+
+
+
+Example programm help text.
+
+::
+
+    $ python examples/basicexample.py --help
+    usage: example.py [-h] <command> ...
+
+    example programm
 
     optional arguments:
-      -h, --help       show this help message and exit
-      --config CONFIG  optional default=example.json
-      --quiet          optional flag
+      -h, --help  show this help message and exit
 
     commands:
       <command>
-        clionly        Command only visible in cli interface.
-        jsonrpc        Start json-rpc service.
-        example        Example command help text from method doc string.
+        add       adds two numbers
+        jsonrpc   Start json-rpc service.
 
-Command interface and help text (jsonrpc command added by default).
+
+Example command help text
 
 ::
 
-    $ python example.py jsonrpc -h
-    usage: example.py jsonrpc [-h] [--hostname HOSTNAME] [--port PORT]
+
+    $ python examples/basicexample.py jsonrpc --help
+    usage: basicexample.py jsonrpc [-h] [--hostname HOSTNAME] [--port PORT]
 
     optional arguments:
       -h, --help           show this help message and exit
       --hostname HOSTNAME  optional default=localhost
       --port PORT          optional default=8080
+
 
 ==================================================
 Generated json-rpc interface (uses python-jsonrpc)
@@ -102,8 +96,9 @@ Starting the jsonrpc service from the command line.
 
 ::
 
-    $ python example.py jsonrpc
-    Starting ExampleProgramm json-rpc service at http://localhost:8080
+    $ python examples/basicexample.py jsonrpc
+    Starting Calculator json-rpc service at http://localhost:8080
+
 
 Client site jsonrpc usage with python-jsonrpc.
 
@@ -111,22 +106,24 @@ Client site jsonrpc usage with python-jsonrpc.
 
     import pyjsonrpc
     rpc = pyjsonrpc.HttpClient(url = "http://localhost:8080")
-    print rpc.rpconly()
+    print rpc.add(1, 2)
+
 
 Starting the jsonrpc service from within python.
 
 .. code:: python
 
-    import example
-    api = example.ExampleProgramm()
+    import basicexample
+    api = basicexample.Calculator()
     api.jsonrpc()
+
 
 Getting a pyjsonrpc.HttpRequestHandler for further use.
 
 .. code:: python
 
-    import example
-    api = example.ExampleProgramm()
+    import basicexample
+    api = basicexample.Calculator()
     api.get_http_request_handler()
 
 

@@ -136,6 +136,6 @@ def run(definition):
     command_names = _get_cli_commands(definition).keys()
     instance = definition(**_pop_init_args(definition, kwargs))
     command = getattr(instance, kwargs.pop("command"))
-    print command(**kwargs)
+    command(**kwargs)
 
 
