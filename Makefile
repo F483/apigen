@@ -31,11 +31,7 @@ test: devsetup
 	# TODO add tests
 
 
-build: test
-	python setup.py register sdist
-
-
-publish: build
-	python setup.py upload
+publish: test
+	python setup.py register sdist upload
 
 

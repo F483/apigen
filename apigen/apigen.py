@@ -7,10 +7,20 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 
+import sys
+import signal
 import argparse
 import inspect
 import pyjsonrpc
 from BaseHTTPServer import HTTPServer
+
+
+class ApigenArgumentParser(argparse.ArgumentParser):
+
+    def error(self, message):
+        sys.stderr.write('error: %s\n' % message)
+        self.print_help()
+        sys.exit(2)
 
 
 class VarargsFound(Exception):
@@ -61,6 +71,10 @@ class Definition(object):
                 server_address=(hostname, int(port)),
                 RequestHandlerClass=self.get_http_request_handler()
             )
+            def sigint_handler(signum, frame):
+                #http_server.shutdown() # FIXME why does it block?
+                sys.exit(0)
+            signal.signal(signal.SIGINT, sigint_handler)
             http_server.serve_forever()
 
     @command()
@@ -86,7 +100,7 @@ def _add_argument(parser, name, has_default, default):
             parser.add_argument('--%s' % name, action='store_true',
                                 help="optional flag")
         else: # add optional argument
-            parser.add_argument("--%s" % name, default=default, 
+            parser.add_argument("--%s" % name, default=default,
                                 help="optional default=%s" % default)
     else: # add positional argument
         parser.add_argument(name, help="required")
@@ -123,7 +137,7 @@ def _get_arguments(definition):
         description = definition.__doc__
     else:
         description = "%s Command-line interface" % definition.__name__
-    parser = argparse.ArgumentParser(description=description)
+    parser = ApigenArgumentParser(description=description)
 
     # add programm args
     init = _get_init(definition)
