@@ -60,7 +60,7 @@ Example programm help text.
 
 ::
 
-  $ python examples/basicexample.py --help
+  $ python examples/basic.py --help
   usage: example.py [-h] <command> ...
 
   example programm
@@ -78,8 +78,8 @@ Example command help text
 
 ::
 
-  $ python examples/basicexample.py startserver --help
-  usage: basicexample.py startserver [-h] [--hostname HOSTNAME] [--port PORT]
+  $ python examples/basic.py startserver --help
+  usage: basic.py startserver [-h] [--hostname HOSTNAME] [--port PORT]
 
   optional arguments:
     -h, --help           show this help message and exit
@@ -95,7 +95,7 @@ Starting the jsonrpc server from the command line.
 
 ::
 
-  $ python examples/basicexample.py startserver
+  $ python examples/basic.py startserver
   Starting Calculator json-rpc service at http://localhost:8080
 
 
@@ -112,8 +112,8 @@ Starting the jsonrpc service from within python.
 
 .. code:: python
 
-  import basicexample
-  api = basicexample.Calculator()
+  import basic
+  api = basic.Calculator()
   api.startserver()
 
 
@@ -121,8 +121,8 @@ Getting a pyjsonrpc.HttpRequestHandler for further use.
 
 .. code:: python
 
-  import basicexample
-  api = basicexample.Calculator()
+  import basic
+  api = basic.Calculator()
   api.get_http_request_handler()
 
 

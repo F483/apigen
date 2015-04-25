@@ -24,15 +24,18 @@ class KeywordsFound(Exception):
         msg = "command '%s' cannot use keywords" % command.__name__
         super(KeywordsFound, self).__init__(msg)
 
-command_num = 0
 
-def command(cli=True, rpc=True):
+_command_num = 0
+
+
+def command(cli=True, rpc=True, default=False):
     def decorator(func):
-        global command_num
+        global _command_num
         func.apigen_cli = cli # set cli flag
         func.apigen_rpc = rpc # set rpc flag
-        func.apigen_num = command_num # set ordering flag
-        command_num += 1
+        func.apigen_num = _command_num # set ordering flag
+        func.apigen_std = default # set default flag
+        _command_num += 1
         return func
     return decorator
 
