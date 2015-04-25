@@ -36,7 +36,11 @@ setup(
         'python-jsonrpc == 0.7.3',
         'argparse == 1.2.1'
     ],
-    # TODO dev lib dependencies
+    tests_require=[ # TODO how to install it?
+      'ipython',
+      'pudb' # import pudb; pu.db # set break point
+      # TODO lint and static analisys
+    ],
     zip_safe=False
 )
 

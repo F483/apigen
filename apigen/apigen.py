@@ -24,11 +24,15 @@ class KeywordsFound(Exception):
         msg = "command '%s' cannot use keywords" % command.__name__
         super(KeywordsFound, self).__init__(msg)
 
+command_num = 0
 
 def command(cli=True, rpc=True):
     def decorator(func):
-        func.cli_command = cli # set cli flag
-        func.rpc_command = rpc # set rpc flag
+        global command_num
+        func.apigen_cli = cli # set cli flag
+        func.apigen_rpc = rpc # set rpc flag
+        func.apigen_num = command_num # set ordering flag
+        command_num += 1
         return func
     return decorator
 
@@ -41,25 +45,35 @@ class Definition(object):
         return RequestHandler
 
     @command(rpc=False)
-    def jsonrpc(self, hostname="localhost", port=8080):
+    def startserver(self, hostname="localhost", port=8080, daemon=False):
         """Start json-rpc service."""
-        print("Starting %s json-rpc service at http://%s:%s" % (
-            self.__class__.__name__, hostname, port
-        ))
-        http_server = HTTPServer(
-            server_address=(hostname, port),
-            RequestHandlerClass=self.get_http_request_handler()
-        )
-        http_server.serve_forever()
+        if daemon:
+            print("Sorry daemon server not supported just yet.")
+            # TODO start as daemon similar to bitcoind
+        else:
+            print("Starting %s json-rpc service at http://%s:%s" % (
+                self.__class__.__name__, hostname, port
+            ))
+            http_server = HTTPServer(
+                server_address=(hostname, int(port)),
+                RequestHandlerClass=self.get_http_request_handler()
+            )
+            http_server.serve_forever()
+
+    @command()
+    def stopserver(self, hostname="localhost", port=8080):
+        """Stop json-rpc service."""
+        print("Sorry stop server not supported just yet.")
+        # TODO implement
 
 
 def _get_rpc_commands(instance):
-    is_rpc = lambda i: 'rpc_command' in dir(i[1]) and i[1].rpc_command
+    is_rpc = lambda i: 'apigen_rpc' in dir(i[1]) and i[1].apigen_rpc
     return dict(filter(is_rpc, inspect.getmembers(instance)))
 
 
 def _get_cli_commands(definition):
-    is_cli = lambda i: 'cli_command' in dir(i[1]) and i[1].cli_command
+    is_cli = lambda i: 'apigen_cli' in dir(i[1]) and i[1].apigen_cli
     return dict(filter(is_cli, inspect.getmembers(definition)))
 
 
@@ -94,7 +108,7 @@ def _add_arguments(parser, command):
 def _get_init(definition):
     members = dict(inspect.getmembers(definition))
     init = members["__init__"]
-    if type(init) == type(members["jsonrpc"]):
+    if type(init) == type(members["startserver"]):
         return init # __init__ method was added
     return None
 
@@ -117,8 +131,8 @@ def _get_arguments(definition):
     subparsers = parser.add_subparsers(
         title='commands', dest='command', metavar="<command>"
     )
-    commands = _get_cli_commands(definition)
-    for name, command in commands.items():
+    itmes = _get_cli_commands(definition).items()
+    for name, command in sorted(itmes, key=lambda item: item[1].apigen_num):
         command_parser = subparsers.add_parser(name, help=command.__doc__)
         _add_arguments(command_parser, command)
     return vars(parser.parse_args())
