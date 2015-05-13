@@ -12,22 +12,18 @@ class Ordering(apigen.Definition):
 
     @apigen.command()
     def first(self):
-        print "first"
         return "first"
 
     @apigen.command()
     def second(self):
-        print "second"
         return "second"
 
     @apigen.command()
     def third(self):
-        print "third"
         return "third"
 
     @apigen.command()
     def fourth(self):
-        print "fourth"
         return "fourth"
 
 

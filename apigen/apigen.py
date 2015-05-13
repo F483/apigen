@@ -7,6 +7,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 
+import json
 import sys
 import signal
 import argparse
@@ -171,6 +172,6 @@ def run(definition):
     command_names = _get_cli_commands(definition).keys()
     instance = definition(**_pop_init_args(definition, kwargs))
     command = getattr(instance, kwargs.pop("command"))
-    command(**kwargs)
+    print(json.dumps(command(**kwargs), indent=2))
 
 

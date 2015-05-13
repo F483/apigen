@@ -28,9 +28,8 @@ Example API definition
       @apigen.command()
       def add(self, a, b): # command name and args taken from method definition
           """adds two numbers""" # help text taken from method doc string
-          result = Decimal(a) + Decimal(b)
-          print result # cli interface uses stdout and errout
-          return result # rpc interface uses value returned by method
+          result = float(Decimal(a) + Decimal(b))
+          return result # return rpc and cli output (must be JSON serializable)
 
 
   if __name__ == "__main__":
