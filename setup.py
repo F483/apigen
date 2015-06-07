@@ -23,8 +23,8 @@ setup(
     description=('Easily create a CLI and JSON-RPC interface '
                  'from a common API definition.'),
     long_description=open("README.rst").read(),
-    keywords=("CLI, JSON, RPC, JSON-RPC, API, argparse, Remote Procedure Call, "
-              "JavaScript Object Notation, Data Interchange"),
+    keywords=("CLI, JSON, RPC, JSON-RPC, API, Remote Procedure Call, "
+              "JavaScript Object Notation, argparse, Data Interchange"),
     url='https://github.com/F483/apigen/',
     author='Fabian Barkhau',
     author_email='fabian.barkhau@gmail.com',
@@ -32,16 +32,14 @@ setup(
     packages=find_packages(),
     download_url = DOWNLOAD_URL,
     #test_suite="tests",
-    install_requires=[
-        'python-jsonrpc == 0.7.3',
-        'argparse == 1.2.1'
+    install_requires=[ # TODO explicit versions
+        'python-jsonrpc',
+        'argparse',
     ],
-    tests_require=[ # TODO how to install it?
-      'ipython',
-      'pudb' # import pudb; pu.db # set break point
-      # TODO lint and static analisys
+    tests_require=[  # TODO how to install it?
+        #'ipython',
+        #'pudb'  # import pudb; pu.db # set break point
+        # TODO lint and static analisys
     ],
     zip_safe=False
 )
-
-

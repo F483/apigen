@@ -7,8 +7,7 @@ help:
 	@echo "  clean      Remove all generated files."
 	@echo "  test       Run tests and analisys tools."
 	@echo "  devsetup   Setup development environment."
-	@echo "  build      Build package."
-	@echo "  publish    Upload package to pypi."
+	@echo "  publish    Build and upload package to pypi."
 
 
 clean:
@@ -16,22 +15,25 @@ clean:
 	@rm -rf apigen.egg-info
 	@rm -rf build
 	@rm -rf dist
+	@rm -rf *.egg
 	@find | grep -i ".*\.pyc$$" | xargs -r -L1 rm
 
 
 devsetup: clean
-	# TODO python 2 venv
-	# TODO python 3 venv
-	python setup.py develop
+	@virtualenv -p /usr/bin/python2 env/py2
+	@virtualenv -p /usr/bin/python3 env/py3
+	@env/py2/bin/python setup.py develop
+	@env/py3/bin/python setup.py develop
 
 
-test: devsetup
-	# TODO add static analisys 
-	# TODO add lint 
+test:
+	# TODO add static analisys
+	# TODO add lint
+	# TODO add coverage
 	# TODO add tests
 
 
 publish: test
-	python setup.py register sdist upload
+	env/py2/bin/python setup.py register sdist upload
 
 

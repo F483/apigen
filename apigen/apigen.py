@@ -5,8 +5,6 @@
 
 from __future__ import print_function
 from __future__ import unicode_literals
-
-
 import json
 import sys
 import signal
@@ -42,10 +40,10 @@ _command_num = 0
 def command(cli=True, rpc=True, default=False):
     def decorator(func):
         global _command_num
-        func.apigen_cli = cli # set cli flag
-        func.apigen_rpc = rpc # set rpc flag
-        func.apigen_num = _command_num # set ordering flag
-        func.apigen_std = default # set default flag
+        func.apigen_cli = cli  # set cli flag
+        func.apigen_rpc = rpc  # set rpc flag
+        func.apigen_num = _command_num  # set ordering flag
+        func.apigen_std = default  # set default flag
         _command_num += 1
         return func
     return decorator
@@ -72,6 +70,7 @@ class Definition(object):
                 server_address=(hostname, int(port)),
                 RequestHandlerClass=self.get_http_request_handler()
             )
+
             def sigint_handler(signum, frame):
                 #http_server.shutdown() # FIXME why does it block?
                 sys.exit(0)
@@ -97,23 +96,23 @@ def _get_cli_commands(definition):
 
 def _add_argument(parser, name, has_default, default):
     if has_default:
-        if type(default) == type(True) and default == False: # add flag
+        if isinstance(default, bool) and default is False:  # add flag
             parser.add_argument('--%s' % name, action='store_true',
                                 help="optional flag")
-        else: # add optional argument
+        else:  # add optional argument
             parser.add_argument("--%s" % name, default=default,
                                 help="optional default=%s" % default)
-    else: # add positional argument
+    else:  # add positional argument
         parser.add_argument(name, help="required")
 
 
 def _add_arguments(parser, command):
     argspec = inspect.getargspec(command)
-    if argspec.varargs: # no *args
+    if argspec.varargs:  # no *args
         raise VarargsFound(command)
-    if argspec.keywords: # no **kwargs
+    if argspec.keywords:  # no **kwargs
         raise KeywordsFound(command)
-    args = argspec.args[1:] # exclude self
+    args = argspec.args[1:]  # exclude self
     defaults = argspec.defaults if argspec.defaults else []
     positional_count = len(args) - len(defaults)
     for i in range(len(args)):
@@ -127,7 +126,7 @@ def _get_init(definition):
     members = dict(inspect.getmembers(definition))
     init = members["__init__"]
     if type(init) == type(members["startserver"]):
-        return init # __init__ method was added
+        return init  # __init__ method was added
     return None
 
 
@@ -161,7 +160,7 @@ def _pop_init_args(definition, kwargs):
     init = _get_init(definition)
     if not init:
         return init_args
-    argnames = inspect.getargspec(init).args[1:] # exclude self
+    argnames = inspect.getargspec(init).args[1:]  # exclude self
     for argname in argnames:
         init_args[argname] = kwargs.pop(argname)
     return init_args
@@ -169,9 +168,6 @@ def _pop_init_args(definition, kwargs):
 
 def run(definition):
     kwargs = _get_arguments(definition)
-    command_names = _get_cli_commands(definition).keys()
     instance = definition(**_pop_init_args(definition, kwargs))
     command = getattr(instance, kwargs.pop("command"))
     print(json.dumps(command(**kwargs), indent=2))
-
-

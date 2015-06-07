@@ -5,7 +5,6 @@
 
 
 import apigen
-from decimal import Decimal
 
 
 class Ordering(apigen.Definition):
@@ -28,5 +27,4 @@ class Ordering(apigen.Definition):
 
 
 if __name__ == "__main__":
-    apigen.run(Ordering) 
-
+    apigen.run(Ordering)
