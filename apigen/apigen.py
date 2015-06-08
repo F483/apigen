@@ -23,12 +23,14 @@ class ApigenArgumentParser(argparse.ArgumentParser):
 
 
 class VarargsFound(Exception):
+
     def __init__(self, command):
         msg = "command '%s' cannot use varargs" % command.__name__
         super(VarargsFound, self).__init__(msg)
 
 
 class KeywordsFound(Exception):
+
     def __init__(self, command):
         msg = "command '%s' cannot use keywords" % command.__name__
         super(KeywordsFound, self).__init__(msg)
@@ -37,13 +39,12 @@ class KeywordsFound(Exception):
 _command_num = 0
 
 
-def command(cli=True, rpc=True, default=False):
+def command(cli=True, rpc=True):
     def decorator(func):
         global _command_num
         func.apigen_cli = cli  # set cli flag
         func.apigen_rpc = rpc  # set rpc flag
         func.apigen_num = _command_num  # set ordering flag
-        func.apigen_std = default  # set default flag
         _command_num += 1
         return func
     return decorator
@@ -166,8 +167,19 @@ def _pop_init_args(definition, kwargs):
     return init_args
 
 
+def _deserialize(kwargs):
+    def deserialize(item):
+        try:
+            data = json.loads(item[1])
+        except:
+            data = item[1].decode('utf-8') # must be a string
+        return (item[0], data)
+    return dict(map(deserialize, kwargs.items()))
+
+
 def run(definition):
     kwargs = _get_arguments(definition)
+    kwargs = _deserialize(kwargs)
     instance = definition(**_pop_init_args(definition, kwargs))
     command = getattr(instance, kwargs.pop("command"))
-    print(json.dumps(command(**kwargs), indent=2))
+    print(json.dumps(command(**kwargs), indent=2, ensure_ascii=False))

@@ -21,9 +21,9 @@ clean:
 
 devsetup: clean
 	@virtualenv -p /usr/bin/python2 env/py2
-	@virtualenv -p /usr/bin/python3 env/py3
+	#@virtualenv -p /usr/bin/python3 env/py3
 	@env/py2/bin/python setup.py develop
-	@env/py3/bin/python setup.py develop
+	#@env/py3/bin/python setup.py develop
 
 
 test:
