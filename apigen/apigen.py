@@ -169,10 +169,13 @@ def _pop_init_args(definition, kwargs):
 
 def _deserialize(kwargs):
     def deserialize(item):
-        try:
-            data = json.loads(item[1])
-        except:
-            data = item[1].decode('utf-8') # must be a string
+        if isinstance(item[1], str):
+            try:
+                data = json.loads(item[1])  # load as json
+            except:
+                data = item[1].decode('utf-8')  # must be a string
+        else:
+            data = item[1]  # already deserialized default value
         return (item[0], data)
     return dict(map(deserialize, kwargs.items()))
 

@@ -27,9 +27,6 @@ devsetup: clean
 
 
 test:
-	# TODO add static analisys
-	# TODO add lint
-	# TODO add coverage
 	# TODO add tests
 
 
