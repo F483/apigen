@@ -46,22 +46,26 @@ def command(cli=True, rpc=True):
 
         # wrap func for rpc exception handeling
         def wrapper(*args, **kwargs):
-            if not args[0].apigen_serving: # cli or python call
+            if not args[0].apigen_serving:  # cli or python call
                 return func(*args, **kwargs)
-            else: # rpc call
+            else:  # rpc call
                 try:
                     return func(*args, **kwargs)
                 except Exception as e:
-                    code = -32000 # -32000 to 32099
+                    code = -32000  # -32000 to 32099
                     msg = e.message
-                    data = traceback.format_exc()
+                    data = json.dumps({
+                        "traceback": traceback.format_exc(),
+                        "classname": e.__class__.__name__,
+                        "repr": repr(e)
+                    })
                     raise pyjsonrpc.rpcerror.JsonRpcError(msg, data, code)
 
         # add flags to wrapper
         wrapper.apigen_cli = cli  # set expose cli flag
         wrapper.apigen_rpc = rpc  # set expose rpc flag
         wrapper.apigen_num = _command_num  # set cli ordering flag
-        wrapper.apigen_src = func # attach func to get argument later
+        wrapper.apigen_src = func  # attach func to get argument later
 
         _command_num += 1
         return wrapper
