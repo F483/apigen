@@ -11,6 +11,7 @@ import signal
 import argparse
 import inspect
 import pyjsonrpc
+import traceback
 from BaseHTTPServer import HTTPServer
 
 
@@ -42,15 +43,34 @@ _command_num = 0
 def command(cli=True, rpc=True):
     def decorator(func):
         global _command_num
-        func.apigen_cli = cli  # set cli flag
-        func.apigen_rpc = rpc  # set rpc flag
-        func.apigen_num = _command_num  # set ordering flag
+
+        # wrap func for rpc exception handeling
+        def wrapper(*args, **kwargs):
+            if not args[0].apigen_serving: # cli or python call
+                return func(*args, **kwargs)
+            else: # rpc call
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    code = -32000 # -32000 to 32099
+                    msg = e.message
+                    data = traceback.format_exc()
+                    raise pyjsonrpc.rpcerror.JsonRpcError(msg, data, code)
+
+        # add flags to wrapper
+        wrapper.apigen_cli = cli  # set expose cli flag
+        wrapper.apigen_rpc = rpc  # set expose rpc flag
+        wrapper.apigen_num = _command_num  # set cli ordering flag
+        wrapper.apigen_src = func # attach func to get argument later
+
         _command_num += 1
-        return func
+        return wrapper
     return decorator
 
 
 class Definition(object):
+
+    apigen_serving = False
 
     def get_http_request_handler(self):
         class RequestHandler(pyjsonrpc.HttpRequestHandler):
@@ -60,6 +80,7 @@ class Definition(object):
     @command(rpc=False)
     def startserver(self, hostname="localhost", port=8080, daemon=False):
         """Start json-rpc service."""
+        self.apigen_serving = True
         if daemon:
             print("Sorry daemon server not supported just yet.")
             # TODO start as daemon similar to bitcoind
@@ -108,11 +129,11 @@ def _add_argument(parser, name, has_default, default):
 
 
 def _add_arguments(parser, command):
-    argspec = inspect.getargspec(command)
+    argspec = inspect.getargspec(command.apigen_src)
     if argspec.varargs:  # no *args
-        raise VarargsFound(command)
+        raise VarargsFound(command.apigen_src)
     if argspec.keywords:  # no **kwargs
-        raise KeywordsFound(command)
+        raise KeywordsFound(command.apigen_src)
     args = argspec.args[1:]  # exclude self
     defaults = argspec.defaults if argspec.defaults else []
     positional_count = len(args) - len(defaults)
@@ -175,7 +196,7 @@ def _deserialize(kwargs):
             except:
                 data = item[1].decode('utf-8')  # must be a string
         else:
-            data = item[1]  # already deserialized default value
+            data = item[1]  # already deserialized (method default value)
         return (item[0], data)
     return dict(map(deserialize, kwargs.items()))
 
@@ -185,4 +206,6 @@ def run(definition):
     kwargs = _deserialize(kwargs)
     instance = definition(**_pop_init_args(definition, kwargs))
     command = getattr(instance, kwargs.pop("command"))
-    print(json.dumps(command(**kwargs), indent=2, ensure_ascii=False))
+    result = command(**kwargs)
+    if result:
+        print(json.dumps(result, indent=2, ensure_ascii=False))

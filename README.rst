@@ -97,13 +97,31 @@ Starting the jsonrpc server from the command line.
   Starting Calculator json-rpc service at http://localhost:8080
 
 
-Client site jsonrpc usage with python-jsonrpc.
+Client side jsonrpc usage with python-jsonrpc.
 
 .. code:: python
 
   import pyjsonrpc
   rpc = pyjsonrpc.HttpClient(url = "http://localhost:8080")
   print rpc.add(1, 2)
+
+
+Client side exception handeling.
+
+.. code:: python
+
+  # from examples/exceptions.py
+  import pyjsonrpc
+  rpc = pyjsonrpc.HttpClient(url = "http://localhost:8080")
+  try:
+      print rpc.add(1, "str")
+  except pyjsonrpc.rpcerror.JsonRpcError as e:
+      print e.code # see http://www.jsonrpc.org/specification#error_object
+
+      # Server error if an exception is raised during the call.
+      if e.code <=-32000 and e.code >= -32099:
+          print e.message # source exception message
+          print e.data # source exception stack trace
 
 
 Starting the jsonrpc service from within python.
