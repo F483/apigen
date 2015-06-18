@@ -151,8 +151,12 @@ def _add_arguments(parser, command):
 def _get_init(definition):
     members = dict(inspect.getmembers(definition))
     init = members["__init__"]
-    if type(init) == type(members["startserver"]):
-        return init  # __init__ method was added
+    if type(init) == type(members["startserver"]):  # __init__ method was added
+        # wrap init so _add_arguments works
+        def wrapper(*args, **kwargs):
+            return init(*args, **kwargs)
+        wrapper.apigen_src = init
+        return wrapper
     return None
 
 
@@ -186,7 +190,7 @@ def _pop_init_args(definition, kwargs):
     init = _get_init(definition)
     if not init:
         return init_args
-    argnames = inspect.getargspec(init).args[1:]  # exclude self
+    argnames = inspect.getargspec(init.apigen_src).args[1:]  # exclude self
     for argname in argnames:
         init_args[argname] = kwargs.pop(argname)
     return init_args
