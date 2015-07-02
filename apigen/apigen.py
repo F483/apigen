@@ -180,7 +180,8 @@ def _get_arguments(definition):
     )
     itmes = _get_cli_commands(definition).items()
     for name, command in sorted(itmes, key=lambda item: item[1].apigen_num):
-        command_parser = subparsers.add_parser(name, help=command.__doc__)
+        helptext = command.apigen_src.__doc__
+        command_parser = subparsers.add_parser(name, help=helptext)
         _add_arguments(command_parser, command)
     return vars(parser.parse_args())
 
