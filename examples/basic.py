@@ -7,14 +7,13 @@
 import apigen
 
 
-class Calculator(apigen.Definition):  # programm name taken from class name
-    """example programm"""  # programm help text taken from class doc string.
+class Calculator(apigen.Definition):  # Programm name taken from class name.
+    """Example Programm"""  # Programm help text taken from class doc string.
 
     @apigen.command()
-    def add(self, a, b):  # command name and args taken from method definition
-        """adds two items"""  # help text taken from method doc string
-        return a + b  # returned rpc and cli output (must be JSON serializable)
-
+    def add(self, a, b):  # Command name and args taken from method.
+        """adds two items"""  # Help text taken from method doc string.
+        return a + b  # Returned rpc/cli output (must be JSON serializable).
 
 if __name__ == "__main__":
-    apigen.run(Calculator)  # run cli interface
+    apigen.run(Calculator)  # Run cli interface.

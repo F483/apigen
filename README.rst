@@ -16,60 +16,81 @@ Installation
 Example API definition
 ======================
 
+I simple example application with an add command.
+
 .. code:: python
 
   # from examples/basic.py
   import apigen
 
 
-  class Calculator(apigen.Definition):  # programm name taken from class name
-      """example programm"""  # programm help text taken from class doc string.
+  class Calculator(apigen.Definition):  # Programm name taken from class name.
+      """Example Programm"""  # Programm help text taken from class doc string.
 
       @apigen.command()
-      def add(self, a, b):  # command name and args taken from method definition
-          """adds two items"""  # help text taken from method doc string
-          return a + b  # returned rpc and cli output (must be JSON serializable)
+      def add(self, a, b):  # Command name and args taken from method.
+          """adds two items"""  # Help text taken from method doc string.
+          return a + b  # Returned rpc/cli output (must be JSON serializable).
 
 
   if __name__ == "__main__":
-      apigen.run(Calculator)  # run cli interface
+      apigen.run(Calculator)  # Run CLI interface.
+
+
+The created CLI/RPC interface behaves as you would expect from a python class.
+
+ - Programm arguments are taken from the __init__ method.
+ - Command arguments are taken from the respective command methods.
+ - Manditory and optional arguments work just like you would expect in python.
+ - In addition arguments with the default value False are flags in the CLI.
+
+.. code:: python
+
+  # from examples/arguments.py
+  import apigen
+
+
+  class ArgumentsExample(apigen.Definition):
+
+      def __init__(self, quiet=False, config_path="default/path.json"):
+          self.quiet = quiet
+          self.config_path = config_path
+
+      @apigen.command()
+      def show_args(self, first, second, optional="Default"):
+          if not self.quiet:
+              print("noise")
+          return { 'first': first, 'second': second, 'optional': optional }
+
+
+  if __name__ == "__main__":
+      apigen.run(ArgumentsExample)
 
 
 =======================================
-Generated cli interface (uses argparse)
+Generated CLI interface (uses argparse)
 =======================================
 
 Program, command and arguments order.
 
 ::
 
-  program [program arguments] <command> [command arguments] 
+  program [program arguments] <command> [command arguments]
 
 
 Argument format.
 
 ::
 
-  program positionalargvalue --optionalarg=value --flag
+  program positional_argument_value --optional_argument=value --flag
 
 
 
-Example programm help text.
+Programm help text.
 
 ::
 
   $ python examples/basic.py --help
-  usage: example.py [-h] <command> ...
-
-  example programm
-
-  optional arguments:
-    -h, --help  show this help message and exit
-
-  commands:
-    <command>
-      add            adds two numbers
-      startserver    Start json-rpc service.
 
 
 Example command help text
@@ -77,12 +98,33 @@ Example command help text
 ::
 
   $ python examples/basic.py startserver --help
-  usage: basic.py startserver [-h] [--hostname HOSTNAME] [--port PORT]
 
-  optional arguments:
-    -h, --help           show this help message and exit
-    --hostname HOSTNAME  optional default=localhost
-    --port PORT          optional default=8080
+
+CLI arguments must be given as json data.The json data automatically is 
+unmarshalled before calling the command function and the returned result is
+automatically marshalled.
+
+::
+
+  $ python examples/basic.py add 1 2
+  3
+
+  $ python examples/basic.py add 1.1 2.2
+  3.3000000000000003
+
+  $ python examples/basic.py add "foo" "bar"
+  "foobar"
+
+  $ python examples/basic.py add "[1,2,3]" "[4,5,6]"
+  [
+    1, 
+    2, 
+    3, 
+    4, 
+    5, 
+    6
+  ]
+
 
 
 ==================================================
@@ -97,13 +139,29 @@ Starting the jsonrpc server from the command line.
   Starting Calculator json-rpc service at http://localhost:8080
 
 
-Client side jsonrpc usage with python-jsonrpc.
+Client side jsonrpc usage with python-jsonrpc. 
+
+RPC arguments must be given as json serializable data. The arguments will
+automatically be marshalled and unmarshalled.
 
 .. code:: python
 
-  import pyjsonrpc
-  rpc = pyjsonrpc.HttpClient(url = "http://localhost:8080")
-  print rpc.add(1, 2)
+
+  >>> import pyjsonrpc
+
+  >>> rpc = pyjsonrpc.HttpClient(url = "http://localhost:8080")
+
+  >>> rpc.add(1, 2)
+  3
+
+  >>> rpc.add(1.1, 2.2)
+  3.3000000000000003
+
+  >>> rpc.add("foo", "bar")
+  u'foobar'
+
+  >>> rpc.add([1,2,3], [4,5,6])
+  [1, 2, 3, 4, 5, 6]
 
 
 Client side exception handeling.
