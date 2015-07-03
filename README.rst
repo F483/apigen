@@ -71,36 +71,29 @@ The created CLI/RPC interface behaves as you would expect from a python class.
 Generated CLI interface (uses argparse)
 =======================================
 
-Program, command and arguments order.
+Generated CLI interface.
 
 ::
 
-  program [program arguments] <command> [command arguments]
+  # Program, command and arguments order.
+  $ python program.py [program arguments] <command> [command arguments]
+
+  # Argument format.
+  $ python program.py positional_argument_value --optional_argument=value --flag
 
 
-Argument format.
-
-::
-
-  program positional_argument_value --optional_argument=value --flag
-
-
-
-Programm help text.
+Showing the generated help.
 
 ::
 
+  # Show programm help text.
   $ python examples/basic.py --help
 
-
-Example command help text
-
-::
-
+  # Show command help text
   $ python examples/basic.py startserver --help
 
 
-CLI arguments must be given as json data.The json data automatically is 
+CLI arguments must be given as json data.The json data automatically is
 unmarshalled before calling the command function and the returned result is
 automatically marshalled.
 
@@ -117,19 +110,19 @@ automatically marshalled.
 
   $ python examples/basic.py add "[1,2,3]" "[4,5,6]"
   [
-    1, 
-    2, 
-    3, 
-    4, 
-    5, 
+    1,
+    2,
+    3,
+    4,
+    5,
     6
   ]
 
 
 
-==================================================
-Generated json-rpc interface (uses python-jsonrpc)
-==================================================
+===============================================
+Client side json-rpc usage with python-jsonrpc.
+===============================================
 
 Starting the jsonrpc server from the command line.
 
@@ -139,7 +132,6 @@ Starting the jsonrpc server from the command line.
   Starting Calculator json-rpc service at http://localhost:8080
 
 
-Client side jsonrpc usage with python-jsonrpc. 
 
 RPC arguments must be given as json serializable data. The arguments will
 automatically be marshalled and unmarshalled.
@@ -206,4 +198,46 @@ Getting a pyjsonrpc.HttpRequestHandler for further use.
   api.get_http_request_handler()
 
 
+==========================================
+Client side json-rpc usage with javascript
+==========================================
 
+.. code:: javascript
+
+  // from examples/node.js
+
+  // https://www.npmjs.com/package/node-json-rpc
+  // npm install node-json-rpc
+  var rpc = require('node-json-rpc');
+
+  var client = new rpc.Client({
+        port: 8080,
+        host: '127.0.0.1',
+        path: '/',
+  });
+
+  client.call({
+      "jsonrpc": "2.0",
+      "method": "add",
+      "params": {
+        a: 1,
+        b: 3
+      },
+      "id": 0
+    },
+    function(err, res) {
+      if (err) {
+        console.log("Error add");
+        console.log(err);
+      } else {
+        console.log("Success add");
+        console.log(res);
+      }
+    }
+  );
+
+::
+
+  $ node examples/node.js
+  Success add
+  { jsonrpc: '2.0', id: 0, result: 4 }
