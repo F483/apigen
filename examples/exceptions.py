@@ -21,3 +21,4 @@ except pyjsonrpc.rpcerror.JsonRpcError as e:
         print data["classname"]  # source exception class name
         print data["repr"]  # source exception repr string
         print data["traceback"]  # source exception traceback
+        print data["version"]  # source module version if present

@@ -24,6 +24,11 @@ I simple example application with an add command.
   import apigen
 
 
+  # automatically added verison command will use module version if present
+  # rpc exceptions will also include module version if persent
+  __version__ = "1.0.0"
+
+
   class Calculator(apigen.Definition):  # Programm name taken from class name.
       """Example Programm"""  # Programm help text taken from class doc string.
 
@@ -178,6 +183,7 @@ Client side exception handeling.
           print data["classname"]  # source exception class name
           print data["repr"]  # source exception repr string
           print data["traceback"]  # source exception traceback
+          print data["version"]  # source module version if present
 
 
 Starting the jsonrpc service from within python.

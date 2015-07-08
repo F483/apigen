@@ -40,6 +40,14 @@ class KeywordsFound(Exception):
 _command_num = 0
 
 
+def _get_verison(cmd_self):
+    cmd_module_name = cmd_self.__class__.__module__
+    cmd_module = sys.modules[cmd_module_name]
+    if hasattr(cmd_module, '__version__'):
+        return cmd_module.__version__
+    return ""
+
+
 def command(cli=True, rpc=True):
     def decorator(func):
         global _command_num
@@ -57,6 +65,7 @@ def command(cli=True, rpc=True):
                     data = json.dumps({
                         "traceback": traceback.format_exc(),
                         "classname": e.__class__.__name__,
+                        "version": _get_verison(args[0]),
                         "repr": repr(e)
                     })
                     raise pyjsonrpc.rpcerror.JsonRpcError(msg, data, code)
@@ -108,6 +117,10 @@ class Definition(object):
         """Stop json-rpc service."""
         print("Sorry stop server not supported just yet.")
         # TODO implement
+
+    @command()
+    def version(self):
+        return _get_verison(self)
 
 
 def _get_rpc_commands(instance):

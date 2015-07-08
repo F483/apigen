@@ -7,6 +7,11 @@
 import apigen
 
 
+# automatically added verison command will use module version if present
+# rpc exceptions will also include module version if persent
+__version__ = "1.0.0"
+
+
 class Calculator(apigen.Definition):  # Programm name taken from class name.
     """Example Programm"""  # Programm help text taken from class doc string.
 
@@ -14,6 +19,7 @@ class Calculator(apigen.Definition):  # Programm name taken from class name.
     def add(self, a, b):  # Command name and args taken from method.
         """adds two items"""  # Help text taken from method doc string.
         return a + b  # Returned rpc/cli output (must be JSON serializable).
+
 
 if __name__ == "__main__":
     apigen.run(Calculator)  # Run cli interface.
