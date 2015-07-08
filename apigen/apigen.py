@@ -120,6 +120,7 @@ class Definition(object):
 
     @command()
     def version(self):
+        """Returns the current software version!"""
         return _get_verison(self)
 
 
