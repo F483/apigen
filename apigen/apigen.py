@@ -40,7 +40,7 @@ class KeywordsFound(Exception):
 _command_num = 0
 
 
-def _get_verison(cmd_self):
+def _get_version(cmd_self):
     cmd_module_name = cmd_self.__class__.__module__
     cmd_module = sys.modules[cmd_module_name]
     if hasattr(cmd_module, '__version__'):
@@ -65,7 +65,7 @@ def command(cli=True, rpc=True):
                     data = json.dumps({
                         "traceback": traceback.format_exc(),
                         "classname": e.__class__.__name__,
-                        "version": _get_verison(args[0]),
+                        "version": _get_version(args[0]),
                         "repr": repr(e)
                     })
                     raise pyjsonrpc.rpcerror.JsonRpcError(msg, data, code)
@@ -121,7 +121,7 @@ class Definition(object):
     @command()
     def version(self):
         """Returns the current software version!"""
-        return _get_verison(self)
+        return _get_version(self)
 
 
 def _get_rpc_commands(instance):
