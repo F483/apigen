@@ -33,7 +33,7 @@ setup(
     download_url = DOWNLOAD_URL,
     #test_suite="tests",
     install_requires=[
-        'python-jsonrpc == 0.7.7',
+        'python-jsonrpc == 0.7.8',
         'argparse == 1.2.1',
     ],
     tests_require=[

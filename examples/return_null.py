@@ -11,7 +11,7 @@ class ReturnNull(apigen.Definition):
 
     @apigen.command()
     def test(self):
-        return ""
+        return None
 
 
 if __name__ == "__main__":
