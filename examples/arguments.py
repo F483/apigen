@@ -19,6 +19,13 @@ class ArgumentsExample(apigen.Definition):
             print("noise")
         return { 'first': first, 'second': second, 'optional': optional }
 
+    @apigen.command()
+    def arg_type(self, arg):
+        return str(type(arg))
+
+    def on_stop_server(self):
+        print "called on stop"
+
 
 if __name__ == "__main__":
     apigen.run(ArgumentsExample)

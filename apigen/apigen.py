@@ -108,7 +108,14 @@ class Definition(object):
 
             def sigint_handler(signum, frame):
                 #http_server.shutdown() # FIXME why does it block?
+
+                # call stop server handler if exists
+                if('on_stop_server' in dir(self) and
+                        callable(self.on_stop_server)):
+                    self.on_stop_server()
+
                 sys.exit(0)
+
             signal.signal(signal.SIGINT, sigint_handler)
             http_server.serve_forever()
 
