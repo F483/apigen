@@ -107,11 +107,17 @@ class Definition(object):
             )
 
             def sigint_handler(signum, frame):
-                #http_server.shutdown() # FIXME why does it block?
+                # http_server.shutdown()  # FIXME why does it block?
 
                 # call stop server handler if exists
-                if('on_stop_server' in dir(self) and
+                if('on_shutdown' in dir(self) and
+                        callable(self.on_shutdown)):
+                    self.on_shutdown()
+
+                # for backwards compatibility
+                elif('on_stop_server' in dir(self) and
                         callable(self.on_stop_server)):
+                    print("DEPRECATED on_stop_server! Use on_shutdown instead.")
                     self.on_stop_server()
 
                 sys.exit(0)
@@ -132,12 +138,16 @@ class Definition(object):
 
 
 def _get_rpc_commands(instance):
-    is_rpc = lambda i: 'apigen_rpc' in dir(i[1]) and i[1].apigen_rpc
+
+    def is_rpc(i):
+        return 'apigen_rpc' in dir(i[1]) and i[1].apigen_rpc
     return dict(filter(is_rpc, inspect.getmembers(instance)))
 
 
 def _get_cli_commands(definition):
-    is_cli = lambda i: 'apigen_cli' in dir(i[1]) and i[1].apigen_cli
+
+    def is_cli(i):
+        return 'apigen_cli' in dir(i[1]) and i[1].apigen_cli
     return dict(filter(is_cli, inspect.getmembers(definition)))
 
 
@@ -172,7 +182,9 @@ def _add_arguments(parser, command):
 def _get_init(definition):
     members = dict(inspect.getmembers(definition))
     init = members["__init__"]
-    if type(init) == type(members["startserver"]):  # __init__ method was added
+
+    # check if __init__ method was added
+    if type(init) == type(members["startserver"]): # NOQA
         # wrap init so _add_arguments works
         def wrapper(*args, **kwargs):
             return init(*args, **kwargs)
@@ -239,3 +251,7 @@ def run(definition):
     result = command(**kwargs)
     if result:
         print(json.dumps(result, indent=2, ensure_ascii=False))
+
+    # shutdown gracefully
+    if('on_shutdown' in dir(instance) and callable(instance.on_shutdown)):
+        instance.on_shutdown()

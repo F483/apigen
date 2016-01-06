@@ -17,13 +17,13 @@ class ArgumentsExample(apigen.Definition):
     def show_args(self, first, second, optional="Default"):
         if not self.quiet:
             print("noise")
-        return { 'first': first, 'second': second, 'optional': optional }
+        return {'first': first, 'second': second, 'optional': optional}
 
     @apigen.command()
     def arg_type(self, arg):
         return str(type(arg))
 
-    def on_stop_server(self):
+    def on_shutdown(self):
         print "called on stop"
 
 
