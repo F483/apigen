@@ -3,9 +3,11 @@
 # License: MIT (see LICENSE file)
 
 
-from . apigen import (
-    VarargsFound, KeywordsFound, # exceptions
-    command, # decorator
-    Definition, # API base class
-    run # exec cli interface
+from .version import __version__  # NOQA
+from . apigen import ( # NOQA
+    VarargsFound,
+    KeywordsFound,
+    command,
+    Definition,
+    run
 )

@@ -1,25 +1,15 @@
 #!/usr/bin/env python
 # coding: utf-8
-# Copyright (c) 2015 Fabian Barkhau <fabian.barkhau@gmail.com>
-# License: MIT (see LICENSE file)
 
 
-import os
 from setuptools import setup, find_packages
 
 
-THISDIR = os.path.dirname(os.path.abspath(__file__))
-os.chdir(THISDIR)
-
-
-VERSION = open("version.txt").readline().strip()
-DOWNLOAD_BASEURL = "https://pypi.python.org/packages/source/a/apigen/"
-DOWNLOAD_URL = DOWNLOAD_BASEURL + "apigen-%s.tar.gz" % VERSION
+exec(open('apigen/version.py').read())  # load __version__
 
 
 setup(
     name='apigen',
-    version=VERSION,
     description=('Easily create a CLI and JSON-RPC interface '
                  'from a common API definition.'),
     long_description=open("README.rst").read(),
@@ -28,13 +18,13 @@ setup(
     url='https://github.com/F483/apigen/',
     author='Fabian Barkhau',
     author_email='fabian.barkhau@gmail.com',
-    license='MIT',
-    packages=find_packages(),
-    download_url=DOWNLOAD_URL,
-    # test_suite="tests",
+    license="MIT",
+    version=__version__,  # NOQA
+    test_suite="tests",
+    dependency_links=[],
     install_requires=open("requirements.txt").readlines(),
     tests_require=open("test_requirements.txt").readlines(),
-    zip_safe=False,
+    packages=find_packages(),
     classifiers=[
         # "Development Status :: 1 - Planning",
         # "Development Status :: 2 - Pre-Alpha",
