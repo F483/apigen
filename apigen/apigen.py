@@ -193,7 +193,7 @@ def _get_init(definition):
     return None
 
 
-def _get_arguments(definition):
+def _get_arguments(definition, args):
 
     # create parser
     if definition.__doc__:
@@ -216,7 +216,7 @@ def _get_arguments(definition):
         helptext = command.apigen_src.__doc__
         command_parser = subparsers.add_parser(name, help=helptext)
         _add_arguments(command_parser, command)
-    return vars(parser.parse_args())
+    return vars(parser.parse_args(args=args))
 
 
 def _pop_init_args(definition, kwargs):
@@ -243,15 +243,17 @@ def _deserialize(kwargs):
     return dict(map(deserialize, kwargs.items()))
 
 
-def run(definition):
-    kwargs = _get_arguments(definition)
+def run(definition, args=None):
+    if args is None:
+        args = sys.argv[1:]
+    kwargs = _get_arguments(definition, args)
     kwargs = _deserialize(kwargs)
     instance = definition(**_pop_init_args(definition, kwargs))
     command = getattr(instance, kwargs.pop("command"))
-    result = command(**kwargs)
-    if result:
-        print(json.dumps(result, indent=2, ensure_ascii=False))
-
-    # shutdown gracefully
-    if('on_shutdown' in dir(instance) and callable(instance.on_shutdown)):
-        instance.on_shutdown()
+    try:
+        result = command(**kwargs)
+        if result:
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+    finally:
+        if('on_shutdown' in dir(instance) and callable(instance.on_shutdown)):
+            instance.on_shutdown()

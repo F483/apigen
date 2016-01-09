@@ -3,6 +3,8 @@
 # Copyright (c) 2015 Fabian Barkhau <fabian.barkhau@gmail.com>
 # License: MIT (see LICENSE file)
 
+# expects examples/basic.py to be running as an rpc on port 8080
+
 
 import json
 import pyjsonrpc
