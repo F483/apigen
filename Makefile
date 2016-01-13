@@ -76,7 +76,7 @@ test: setup
 	$(COVERAGE) report --fail-under=80
 
 
-publish: test
+publish: setup
 	$(PY) setup.py register bdist_wheel upload
 
 

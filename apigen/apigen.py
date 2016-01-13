@@ -90,6 +90,17 @@ class Definition(object):
             methods = _get_rpc_commands(self)
         return RequestHandler
 
+    @command()
+    def version(self):
+        """Returns the current software version!"""
+        return _get_version(self)
+
+    @command()
+    def stopserver(self, hostname="localhost", port=8080):
+        """Stop json-rpc service."""
+        print("Sorry stop server not supported just yet.")
+        # TODO implement
+
     @command(rpc=False)
     def startserver(self, hostname="localhost", port=8080, daemon=False):
         """Start json-rpc service."""
@@ -124,17 +135,6 @@ class Definition(object):
 
             signal.signal(signal.SIGINT, sigint_handler)
             http_server.serve_forever()
-
-    @command()
-    def stopserver(self, hostname="localhost", port=8080):
-        """Stop json-rpc service."""
-        print("Sorry stop server not supported just yet.")
-        # TODO implement
-
-    @command()
-    def version(self):
-        """Returns the current software version!"""
-        return _get_version(self)
 
 
 def _get_rpc_commands(instance):
