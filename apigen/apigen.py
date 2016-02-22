@@ -93,6 +93,7 @@ class Definition(object):
     @command()
     def version(self):
         """Returns the current software version!"""
+        # FIXME return something usefull if no __version__ property
         return _get_version(self)
 
     @command()
@@ -252,8 +253,7 @@ def run(definition, args=None):
     command = getattr(instance, kwargs.pop("command"))
     try:
         result = command(**kwargs)
-        if result:
-            print(json.dumps(result, indent=2, ensure_ascii=False))
+        print(json.dumps(result, indent=2, ensure_ascii=False))  # allow unicode
     finally:
         if('on_shutdown' in dir(instance) and callable(instance.on_shutdown)):
             instance.on_shutdown()
