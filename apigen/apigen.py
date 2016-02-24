@@ -103,7 +103,8 @@ class Definition(object):
         # TODO implement
 
     @command(rpc=False)
-    def startserver(self, hostname="localhost", port=8080, daemon=False):
+    def startserver(self, hostname="localhost", port=8080,
+                    daemon=False, handle_sigint=True):
         """Start json-rpc service."""
         self.apigen_serving = True
         if daemon:
@@ -134,7 +135,8 @@ class Definition(object):
 
                 sys.exit(0)
 
-            signal.signal(signal.SIGINT, sigint_handler)
+            if handle_sigint:
+                signal.signal(signal.SIGINT, sigint_handler)
             http_server.serve_forever()
 
 
